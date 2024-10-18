@@ -9,22 +9,21 @@ import {Button} from "@/components/ui/button";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import Link from "next/link";
+import {loginSchema} from "@/features/auth/schemas";
+import {useLogin} from "@/features/auth/api/use-login";
 
 
-const formSchema = z.object({
-    email: z.string().trim().email(),
-    password: z.string().min(8,"Minimum 8 characters"),
-})
 export const SignInCard = () => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const {mutate} = useLogin();
+    const form = useForm<z.infer<typeof loginSchema>>({
+        resolver: zodResolver(loginSchema),
         defaultValues: {
             email: '',
             password: '',
         }
     });
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log(values)
+    const onSubmit = (values: z.infer<typeof loginSchema>) => {
+        mutate({json: values});
     }
     return (
         <Card className="w-full h-full md:w-[478px] border-none shadow-none">
